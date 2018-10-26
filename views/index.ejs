@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>KabiMemo</title>
+    <script
+        src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous">
+    </script>
+    <link rel="stylesheet" href="css/index.css">
+
+    <script>
+        $(function(){
+            $("div#list_memo li").click(function(){
+                let file = $(this).text();
+                $.get("memo/"+file, function(data){
+                    $("input[name=memoname]").val(file);
+                    $("textarea[name=memotext]").val(data);
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <div id="container">
+        <div id="list_memo">
+            list of memo
+            <ul>
+            <% list_memo.forEach(function(item){ %>
+                <li><%= item %></li>
+            <% }); %>
+            </ul>
+        </div>
+
+        <form id="create-memo" action="/" method="post">
+            <input type="text" name="memoname" id="">
+            <textarea name="memotext" id="" cols="30" rows="10"></textarea>
+            <button type="submit">POST</button>
+        </form>
+    </div>
+</body>
+</html>
