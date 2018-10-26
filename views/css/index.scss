@@ -1,3 +1,48 @@
 *{
-    color:red;
+    margin: 0;
+    padding: 0;
+}
+
+body{
+    background-color: silver;
+
+    div#container{
+        width: 100%;
+
+        header{
+            width:100%;
+        }
+
+        form#create-memo{
+            width : 300px;
+            height: 250px;
+            margin-left:1em;
+            float : left;
+
+            li{
+                width : 100%;
+                margin-top: 1em;
+                list-style:none;
+
+                p.caption{
+                    width : 100%;
+                }
+    
+                input[name=memoname]{
+                    width : 50%;
+                }
+    
+                textarea[name=memotext]{
+                    width : 80%;
+                    height: 5em;
+                }
+            }
+        }
+
+        div#list_memo{
+            float:left;
+            margin-top:1em;
+            width : 300px;
+        }
+    }
 }

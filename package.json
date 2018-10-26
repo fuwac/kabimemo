@@ -12,7 +12,7 @@
   "devDependencies": {},
   "scripts": {
     "run-server": "node .",
-    "build-css-manual": "node-sass --output-style compressed views/css/index.scss static/css/index.css"
+    "build-css": "node-sass -w --output-style compressed views/css/index.scss static/css/index.css"
   },
   "author": "kabineko",
   "license": "ISC"

@@ -4,19 +4,22 @@ let app = express();
 let bodyParser = require("body-parser");
 let fs = require("fs");
 
+// エンジンにEJSを設定
 app.engine("ejs", ejs.renderFile);
-
+// staticフォルダ以下に静的なファイル置く
 app.use(express.static(__dirname+"/static"));
-app.use(bodyParser.urlencoded({
-    extended: true
-}));
+// req.body.某を配列として扱う
+app.use(bodyParser.urlencoded({ extended: true }));
 
+// メモの置き場
 let memo_path = (__dirname+"/memo");
 
+// 描画処理
 function rendering(res){
 
-    // リポジトリ読み終わったら実行
+    // リポジトリを走査
     fs.readdir(memo_path, function(err, file_list){
+
         if(err){
             // 読み込めなかったときなんかする（あとで考える）
         } else {
@@ -24,40 +27,44 @@ function rendering(res){
             // .getkeepはjogaiしとく
             file_list = file_list.filter(function(item){return item.match(/^[^\.].*$/);})
 
+            // テンプレ表示
             res.render("index.ejs",{
-                list_memo: file_list
+                list_memo: file_list    // メモ一覧渡す
             });
         }
     });
 }
 
+// POST
 app.post("/", function(req,res){
     console.log("new memo file is '" + req.body.memoname+"'");
-
     // メモ書き込み
     fs.writeFile(memo_path+"/"+req.body.memoname, req.body.memotext);
-
     // レンダリング
     rendering(res);
 });
+// GET
 app.get("/", function(req,res){
     // レンダリング
     rendering(res);
 });
 
-// テキストとして取得
+// memo以下のリクエストはテキストとして取得(ajaxアクセス用)
 app.get("/memo/*", function(req,res){
+    // param[0]に入ってるファイル名を取り出す
     let param = req.params;
-    // メモ読み込み
+    // メモを読み込み
     fs.readFile(memo_path+"/"+param[0], "utf-8", function(err, data){
         if(err){
-
+            // なんかエラーハンドル
         } else {
+            // 読み込んだデータを送る
             res.send(data);
         }
     });
 });
 
+// 1234番ポートで待ち受け
 let server = app.listen(1234, function(){
     console.log("Server is started.");
 });

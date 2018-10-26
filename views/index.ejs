@@ -11,14 +11,15 @@
         crossorigin="anonymous">
     </script>
     <link rel="stylesheet" href="css/index.css">
-
     <script>
         $(function(){
+            // メモ一覧のリストをクリック
             $("div#list_memo li").click(function(){
+                // liの内容（ファイル名）を取得
                 let file = $(this).text();
                 $.get("memo/"+file, function(data){
-                    $("input[name=memoname]").val(file);
-                    $("textarea[name=memotext]").val(data);
+                    $("input[name=memoname]").val(file);    // ファイル名と
+                    $("textarea[name=memotext]").val(data); // テキストデータをフォームに反映
                 });
             });
         });
@@ -26,20 +27,34 @@
 </head>
 <body>
     <div id="container">
+        <header>
+        <h1>KabiMemo</h1>
+        </header>
+
+        <form id="create-memo" action="/" method="post">
+            <ul>
+                <li>
+                    <p class="caption">Title</p>
+                    <input type="text" name="memoname" id="">
+                </li>
+                <li>
+                    <p class="caption">Memo text</p>
+                    <textarea name="memotext" id="" cols="30" rows="10"></textarea>
+                </li>
+                <li>
+                    <button type="submit">SAVE</button>
+                </li>
+            </ul>
+        </form>
+
         <div id="list_memo">
-            list of memo
+            List of memo
             <ul>
             <% list_memo.forEach(function(item){ %>
                 <li><%= item %></li>
             <% }); %>
             </ul>
         </div>
-
-        <form id="create-memo" action="/" method="post">
-            <input type="text" name="memoname" id="">
-            <textarea name="memotext" id="" cols="30" rows="10"></textarea>
-            <button type="submit">POST</button>
-        </form>
     </div>
 </body>
 </html>
