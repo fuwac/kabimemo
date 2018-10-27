@@ -37,11 +37,31 @@ function rendering(res){
 
 // POST
 app.post("/", function(req,res){
-    console.log("new memo file is '" + req.body.memoname+"'");
-    // メモ書き込み
-    fs.writeFile(memo_path+"/"+req.body.memoname, req.body.memotext);
-    // レンダリング
-    rendering(res);
+    // postされた情報で処理を分岐（ごりおし）
+    if(req.body.isdelete == undefined){
+        console.log("new memo file is '" + req.body.memoname+"'");
+        // メモ書き込み
+        fs.writeFile(memo_path+"/"+req.body.memoname, req.body.memotext, function(err){
+            if(err){
+                // エラーだったらなんかする
+            }
+
+            // レンダリング
+            rendering(res);            
+        });
+    } else {
+        // 指定のファイルを削除
+        console.log("delete memo file is '" + req.body.isdelete+"'");
+        // メモ削除
+        fs.unlink(memo_path+"/"+req.body.isdelete, function(err){
+            if(err){
+                // エラーだったらなんかする    
+            }
+
+            // レンダリング
+            rendering(res);
+        });
+    }
 });
 // GET
 app.get("/", function(req,res){

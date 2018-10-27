@@ -22,6 +22,28 @@
                     $("textarea[name=memotext]").val(data); // テキストデータをフォームに反映
                 });
             });
+
+            // SAVEボタンをクリック
+            $("input#memo_create").click(function(){
+                // 動的にフォーム作ってPOSTする
+                let file_name = $("input[name=memoname]").val();
+                let file_text = $("textarea[name=memotext]").val();
+                let $form = $("<form>").attr({"action": "/", "method":"post"});
+                $form.append($("<input>").attr({"type":"hidden", "name":"memoname", "value": file_name}));
+                $form.append($("<input>").attr({"type":"hidden", "name":"memotext", "value": file_text}));
+                $form.appendTo(document.body);
+                $form.submit();
+            });
+
+            // DELETEボタンをクリック
+            $("input#memo_delete").click(function(){
+                // 動的にフォーム作ってPOSTする
+                let file_name = $("input[name=memoname]").val();
+                let $form = $("<form>").attr({"action": "/", "method":"post"});
+                $form.append($("<input>").attr({"type":"hidden", "name":"isdelete", "value": file_name}));
+                $form.appendTo(document.body);
+                $form.submit();
+            });
         });
     </script>
 </head>
@@ -31,7 +53,7 @@
         <h1>KabiMemo</h1>
         </header>
 
-        <form id="create-memo" action="/" method="post">
+        <div id="create-memo">
             <ul>
                 <li>
                     <p class="caption">Title</p>
@@ -42,10 +64,11 @@
                     <textarea name="memotext" id="" cols="30" rows="10"></textarea>
                 </li>
                 <li>
-                    <button type="submit">SAVE</button>
+                    <input type="button" id="memo_create" value="SAVE">
+                    <input type="button" id="memo_delete" value="DELETE">
                 </li>
             </ul>
-        </form>
+        </div>
 
         <div id="list_memo">
             List of memo
