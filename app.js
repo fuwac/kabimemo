@@ -70,11 +70,11 @@ app.get("/", function(req,res){
 });
 
 // memo以下のリクエストはテキストとして取得(ajaxアクセス用)
-app.get("/memo/*", function(req,res){
+app.get("/memo/:filename", function(req,res){
     // param[0]に入ってるファイル名を取り出す
     let param = req.params;
     // メモを読み込み
-    fs.readFile(memo_path+"/"+param[0], "utf-8", function(err, data){
+    fs.readFile(memo_path+"/"+param["filename"], "utf-8", function(err, data){
         if(err){
             // なんかエラーハンドル
         } else {
