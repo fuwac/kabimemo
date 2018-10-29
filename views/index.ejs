@@ -5,47 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>KabiMemo</title>
-    <script
-        src="https://code.jquery.com/jquery-3.3.1.min.js"
-        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-        crossorigin="anonymous">
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
     <link rel="stylesheet" href="css/index.css">
-    <script>
-        $(function(){
-            // メモ一覧のリストをクリック
-            $("div#list_memo li").click(function(){
-                // liの内容（ファイル名）を取得
-                let file = $(this).text();
-                $.get("memo/"+file, function(data){
-                    $("input[name=memoname]").val(file);    // ファイル名と
-                    $("textarea[name=memotext]").val(data); // テキストデータをフォームに反映
-                });
-            });
-
-            // SAVEボタンをクリック
-            $("input#memo_create").click(function(){
-                // 動的にフォーム作ってPOSTする
-                let file_name = $("input[name=memoname]").val();
-                let file_text = $("textarea[name=memotext]").val();
-                let $form = $("<form>").attr({"action": "/", "method":"post"});
-                $form.append($("<input>").attr({"type":"hidden", "name":"memoname", "value": file_name}));
-                $form.append($("<input>").attr({"type":"hidden", "name":"memotext", "value": file_text}));
-                $form.appendTo(document.body);
-                $form.submit();
-            });
-
-            // DELETEボタンをクリック
-            $("input#memo_delete").click(function(){
-                // 動的にフォーム作ってPOSTする
-                let file_name = $("input[name=memoname]").val();
-                let $form = $("<form>").attr({"action": "/", "method":"post"});
-                $form.append($("<input>").attr({"type":"hidden", "name":"isdelete", "value": file_name}));
-                $form.appendTo(document.body);
-                $form.submit();
-            });
-        });
-    </script>
 </head>
 <body>
     <div id="container">
@@ -57,15 +19,15 @@
             <ul>
                 <li>
                     <p class="caption">Title</p>
-                    <input type="text" name="memoname" id="">
+                    <input v-model="memoname" type="text" name="memoname" id="">
                 </li>
                 <li>
                     <p class="caption">Memo text</p>
-                    <textarea name="memotext" id="" cols="30" rows="10"></textarea>
+                    <textarea v-model="memotext" name="memotext" id="" cols="30" rows="10"></textarea>
                 </li>
                 <li>
-                    <input type="button" id="memo_create" value="SAVE">
-                    <input type="button" id="memo_delete" value="DELETE">
+                    <input v-on:click="save_memo" type="button" id="memo_create" value="SAVE">
+                    <input v-on:click="delete_memo" type="button" id="memo_delete" value="DELETE">
                 </li>
             </ul>
         </div>
@@ -74,10 +36,47 @@
             List of memo
             <ul>
             <% list_memo.forEach(function(item){ %>
-                <li><%= item %></li>
+                <li v-on:click="load_memo('<%= item %>')"><%= item %></li>
             <% }); %>
             </ul>
         </div>
     </div>
 </body>
+<script>
+// メモ書き込んだり削除したりするやつ
+let create_memo = new Vue({
+    el: "#create-memo",
+    data : {    // フォームの初期値
+        memoname : "",
+        memotext : "",
+    },
+    methods : {
+        save_memo : function(){
+            axios.post("/", {"memoname": this.memoname, "memotext" : this.memotext}).then(function(response){
+                // 書き込めたら再読込してリスト更新
+                location.reload();
+            });
+        },
+        delete_memo : function(){
+            axios.post("/", {"isdelete": this.memoname}).then(function(response){
+                // 削除できたら再読込してリスト更新
+                location.reload();
+            });
+        }
+    }
+});
+
+// メモ読み込むやつ
+let list_item = new Vue({
+    el: '#list_memo',
+    methods : {
+        load_memo : function(memoname){
+            axios.get("memo/"+memoname).then(function(response){
+                create_memo.memoname = memoname;
+                create_memo.memotext = response.data;
+            });
+        }
+    }
+});
+</script>
 </html>

@@ -10,6 +10,8 @@ app.engine("ejs", ejs.renderFile);
 app.use(express.static(__dirname+"/static"));
 // req.body.某を配列として扱う
 app.use(bodyParser.urlencoded({ extended: true }));
+// ついでにリクエストをJSONで扱う
+app.use(bodyParser.json());
 
 // メモの置き場
 let memo_path = (__dirname+"/memo");
